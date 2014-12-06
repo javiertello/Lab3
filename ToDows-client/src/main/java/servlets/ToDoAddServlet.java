@@ -3,25 +3,33 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.concurrent.CountDownLatch;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.websocket.DeploymentException;
+
+import org.glassfish.tyrus.client.ClientManager;
+
+import com.google.gson.Gson;
 
 import todos.*;
 @SuppressWarnings("serial")
 @WebServlet(urlPatterns = { "/post" })
-public class ToDoPostServlet extends HttpServlet{
+public class ToDoAddServlet extends HttpServlet{
+	public static CountDownLatch latch;
+	public static String json;
+	public static String response;
+	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
+		latch = new CountDownLatch(1);
 		String task = req.getParameter("task");
 		String context = req.getParameter("context");
 		String project = req.getParameter("project");
@@ -36,7 +44,7 @@ public class ToDoPostServlet extends HttpServlet{
 		
 		if(task.equals("")){
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-			out.println("<html><head><title>ToDo REST WebApp</title></head>"
+			out.println("<html><head><title>ToDo WebSockets WebApp</title></head>"
 					+ "<body>"
 					+ "<h2>Please enter a task name</h2>"
 					+ "</body></html>");
@@ -47,23 +55,27 @@ public class ToDoPostServlet extends HttpServlet{
 			t.setTask(task);
 			t.setProject(project);
 			
-			Client client = ClientBuilder.newClient();
-			Response response = client.target("http://localhost:8081/todos")
-					.request(MediaType.APPLICATION_JSON)
-					.post(Entity.entity(t, MediaType.APPLICATION_JSON));
-			if(response.getStatus() == 201){
+			Gson gson = new Gson();
+			json = gson.toJson(t);
+					
+			ClientManager client = ClientManager.createClient();
+			try {
+				client.connectToServer(AddClientEndpoint.class, new URI(
+						"ws://localhost:8025/todos/todo"));
+				latch.await();
+		
 				resp.setStatus(HttpServletResponse.SC_CREATED);
 				out.println("<html><head><title>Created!</title></head>"
 						+ "<body>"
-						+ response.getStatusInfo()
+						+ response
 						+ "</body></html>");
-			}
-			else{
-				resp.setStatus(response.getStatus());
-				out.println("<html><head><title>Error!</title></head>"
-						+ "<body>"
-						+ "<b>"+ response.getStatusInfo()+ "</b>"
-						+ "</body></html>");
+				} catch (DeploymentException | URISyntaxException
+					| InterruptedException | IOException e) {
+					resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					out.println("<html><head><title>Error</title></head>"
+							+ "<body>"
+							+ "An error occurred..."
+							+ "</body></html>");
 			}
 			
 		}

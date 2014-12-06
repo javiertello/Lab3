@@ -1,15 +1,10 @@
 package todos;
 
-import java.net.URI;
-
 public class ToDo {
 	private String task;
 	private String context;
 	private String project;
 	private int priority;
-	//REST
-	private int id;
-	private URI href;
 	
 	public String getTask() {
 		return task;
@@ -34,17 +29,5 @@ public class ToDo {
 	}
 	public void setPriority(int priority) {
 		this.priority = priority;
-	}
-	public int getId() {
-		return id;
-	}
-	public void setId(int id) {
-		this.id = id;
-	}
-	public URI getHref() {
-		return href;
-	}
-	public void setHref(URI href) {
-		this.href = href;
 	}
 }

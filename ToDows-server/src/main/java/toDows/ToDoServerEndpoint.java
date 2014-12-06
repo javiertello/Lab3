@@ -61,11 +61,30 @@ public class ToDoServerEndpoint {
 			break;
 			
 		case "delete":
-			
+			boolean bien2 = delToDo(mesg);
+			try{
+
+				if(bien2){
+					session.getBasicRemote().sendText("Deleted successfully");
+				}else{
+					session.getBasicRemote().sendText("Task does not exist...");
+				}
+			}catch(IOException ioe){
+				System.out.printf(ioe.getMessage());
+			}
 			break;
 			
 		case "get   ":
-			
+			String lista = listToDo();
+			try{
+				if(!lista.equals("")){
+					session.getBasicRemote().sendText(lista);
+				}else{
+					session.getBasicRemote().sendText("error");
+				}
+			}catch(IOException ioe){
+				System.out.printf(ioe.getMessage());
+			}
 			break;
 			
 		}
@@ -112,5 +131,53 @@ public class ToDoServerEndpoint {
         	return false;
         }
 		return true;
+	}
+	
+	public boolean delToDo(String name){
+		String filename = DEFAULT_FILE_NAME;
+        boolean result = false;
+		ToDoList list = new ToDoList();
+		Gson gson = new Gson();
+
+		// Read the existing ToDo list.
+		try {
+			list = gson.fromJson(new FileReader(filename),
+					ToDoList.class);
+		} catch (FileNotFoundException e) {
+			System.out.println(filename
+					+ ": File not found.  Creating a new file.");
+			return false;
+		}
+        result = list.removeToDo(name);  
+		
+        try{
+        	// Write the new ToDo list back to disk.
+    		FileWriter output = new FileWriter(filename);
+    		output.write(gson.toJson(list));
+    		output.close();
+        }catch(IOException e){
+        	System.out.printf(e.getMessage());
+        	return false;
+        }
+		return result;
+	}
+	
+	public String listToDo() {
+		String filename = DEFAULT_FILE_NAME;
+		String retorno = "";
+		ToDoList list = new ToDoList();
+		Gson gson = new Gson();
+
+		// Read the existing ToDo list.
+		try {
+			list = gson.fromJson(new FileReader(filename),
+					ToDoList.class);
+			retorno = gson.toJson(list);
+		} catch (FileNotFoundException e) {
+			System.out.println(filename
+					+ ": File not found.  Creating a new file.");
+			return "";
+		}
+		return retorno;
 	}
 }

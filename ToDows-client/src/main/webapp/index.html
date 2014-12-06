@@ -1,38 +1,28 @@
 <html>
 <head>
-<title>ToDo REST WebApp!</title>
+<title>ToDo WebSocket WebApp!</title>
 </head>
 <body>
-	<h1>Select a CRUD operation (POST, DELETE, GET or PUT)</h1>
+	<h1>Welcome to WebSocket ToDo WebApp!</h1>
+	<h2>Select a operation (ADD, DELETE or LIST)</h2>
 	<form action="post" method="get">
-		<b>POST</b><br/>
+		<b>ADD</b><br/>
 		Enter a task name: <input type="text" name="task"><br/>
 		Enter a context name: <input type="text" name="context"><br/>
 		Enter a project name: <input type="text" name="project"><br/>
 		Enter a priority: <input type="number" name="priority"><br/>
-		<input type="submit" value="POST Task">
+		<input type="submit" value="ADD Task">
 	</form>
 	<hr>
 	<form action="delete" method="get">
 		<b>DELETE</b><br/>
-		Enter the task id: <input type="number" name="id"><br/>
+		Enter the task name: <input type="text" name="id"><br/>
 		<input type="submit" value="DELETE Task">
 	</form>
 	<hr>
 	<form action="get" method="get">
-		<b>GET</b><br/>
-		Enter task id <b>[empty to list all]</b>: <input type="number" name="id"><br/>
-		<input type="submit" value="GET Task(s)">
-	</form>
-	<hr>
-	<form action="put" method="get">
-		<b>PUT</b><br/>
-		Enter a task name: <input type="text" name="task"><br/>
-		Enter a context name: <input type="text" name="context"><br/>
-		Enter a project name: <input type="text" name="project"><br/>
-		Enter a priority: <input type="number" name="priority"><br/>
-		<b>Enter task id:</b> <input type="number" name="id"><br/>
-		<input type="submit" value="PUT Task">
+		<b>LIST</b><br/>
+		<input type="submit" value="LIST Tasks">
 	</form>
 </body>
 </html>

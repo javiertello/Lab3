@@ -24,4 +24,5 @@ repositories {
 dependencies {
    providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
    compile 'org.glassfish.tyrus:tyrus-container-grizzly-server:1.8.3'
+   compile 'com.google.code.gson:gson:2.3'
 }

@@ -16,4 +16,23 @@ public class ToDoList {
 	public void addToDo(ToDo td){
 		list.add(td);
 	}
+	
+	public boolean removeToDo(String task) {
+		int i = 0;
+		int borrar = 0;
+		boolean encontrado = false;
+
+		for (ToDo t : list) {
+			if (t.getTask().equals(task)) {
+				borrar = i;
+				encontrado = true;
+			}
+			i++;
+		}
+		if(encontrado){
+			list.remove(borrar);
+		}
+		
+		return encontrado;
+	}
 }
